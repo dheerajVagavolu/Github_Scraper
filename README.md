@@ -7,8 +7,9 @@ A personal tool for scraping meta data from Github website, for academic purpose
 * Forks
 * Tags ( Not neacassarily provided in all repositories, So may turn up blank )
 
-I used Requests module in python, due to unavailibility of GUI. This made it difficult to integrate selenium. Change the requests module with whatever library required. The code is easily changeable.
-Requests doesnt let you see the data which is loaded using javascript, since it is a simple http request. To counter this I enforced a condition for to check if the page has all the data. if not force another http requests. Which may take a lot of time to get hits.
+If selenium is not initialised the basic requests module will be used, which does not enforce a page load. A check method is in place to ensure all the data is properly gathered in the pull request, else the request is skipped. 
+
+When a complete round is over. The program restarts on all the requests that were missed in the first round. It continues until all the repos are finished.
 
 ## Instructions
 
