@@ -3,8 +3,6 @@ from scrape import create_log, get_name
 def main():
     collected = []
 
-
-    
     if len(repos) == 0:
         print('No repos in the List file')
         exit()

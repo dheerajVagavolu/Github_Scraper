@@ -1,10 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
 import time
+
 try:
     from selenium import webdriver
 except:
     print("====> Selenium Not found")
+
 #class = social_count
 def get_social_count(soup_obj):
     counts = soup_obj.find_all('a', class_='social-count')
@@ -58,7 +60,6 @@ def check(soup_obj):
     for obj in objects:
         name = obj.find('a')['href']
         
-        
         if 'contributors' in name:
             try:
                 t = int(preprocess(obj.text))
@@ -66,7 +67,6 @@ def check(soup_obj):
             except:
                 test = 0
                 
-    
     return test
 
 def create_log(URL):
