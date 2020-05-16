@@ -1,4 +1,4 @@
-# Git_Scrape
+# Github Scraper
 A personal tool for scraping meta data from Github website, for academic purpose.
 
 * Releases
