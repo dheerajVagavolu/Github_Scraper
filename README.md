@@ -1,5 +1,5 @@
 # Github Scraper
-A personal tool for scraping meta data from Github website, for academic purpose.
+A personal tool for scraping meta data from Github website, for academic purpose. ( Using selenium and bs4. )
 
 * Releases
 * Contributors
