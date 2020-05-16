@@ -1,5 +1,5 @@
 # Git_Scrape
-Scraping meta data from Github website. 
+Scraping meta data from Github website. For academic purpose.
 
 * Releases
 * Contributors
