@@ -1,6 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 import time
+try:
+    from selenium import webdriver
+except:
+    print("====> Selenium Not found")
 #class = social_count
 def get_social_count(soup_obj):
     counts = soup_obj.find_all('a', class_='social-count')
@@ -71,9 +75,21 @@ def create_log(URL):
     
     print("Getting the page ..... ")
     
-    page = requests.get(URL.strip())
-    time.sleep(2)
-    soup = BeautifulSoup(page.content, 'html.parser')
+    try:
+        options = webdriver.ChromeOptions()
+        options.add_argument('--ignore-certificate-errors')
+        options.add_argument("--test-type")
+        options.binary_location = "/usr/bin/chromium"
+        driver = webdriver.Chrome(chrome_options=options)
+        html = driver.get(URL.strip())
+        page = html.source
+    except:
+        page = requests.get(URL.strip())
+        page = page.content
+        time.sleep(2)
+
+
+    soup = BeautifulSoup(page, 'html.parser')
 
     # Comment to remove force load. The contributions will not properly load because it is fetched a little late using JS.
     if check(soup) == 0:
