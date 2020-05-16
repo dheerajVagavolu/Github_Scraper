@@ -13,7 +13,7 @@ When a complete round is over. The program restarts on all the requests that wer
 
 ## Instructions
 
-1) Use 'pip install -r requirements.txt' to install requirements
+1) Use 'pip install -r requirements.txt' to install requirements or Use the already prepared virtual environment (.venv)
 2) Populate the repository names in the file 'list' each in a new line.
 3) Use 'python main.py' to run the scripts and collect data.
 
