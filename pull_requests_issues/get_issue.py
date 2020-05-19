@@ -24,25 +24,40 @@ def get_pull_requests(kind ,url, page, _type):
     if len(issues) < 25:
         flag = 0
     for issue in issues:
+        
         meta_data = issue.find('relative-time')
         issue_link = issue.find_all('a', class_='link-gray-dark v-align-middle no-underline h4 js-navigation-open')
 
         for link in issue_link:
+            time.sleep(2)
             try:
                 if 'issue' in link['id']:
+                    print("\n===========================\nIn a link")
                     href = link['href']
                     href = 'https://github.com'+href
+                    print(href)
                     get_deeper(kind, href, meta_data['datetime'][:10]); 
             except:
                 pass
         
 def get_deeper(kind, href, close_date):
 
+    
+
     global flag
     global f1w
     global f2w
     global objects1
     global objects2
+
+
+    if pre_process_date(close_date) < r1:
+        print("Out of range")
+        flag = 0
+    
+    if pre_process_date(close_date) > r4:
+        print("Out of range")
+
 
     page = requests.get(href)
     page = page.content
@@ -51,45 +66,72 @@ def get_deeper(kind, href, close_date):
     title = soup.find('span', class_="js-issue-title")
     labels = soup.find('div', class_="labels css-truncate js-issue-labels")
     status = soup.find('span', class_="State")
-    
-    new_status = str(status['title']).strip().split(' ')[-1]
-    comment_tab = ''
 
+    if status == None:
+        status = "Status: Not-Set"
+    
+    # print(status)
+    
+    
     try:
-        comment_tab = soup.find('div',class_="TableObject-item TableObject-item--primary")
+        new_status = str(status['title']).strip().split(' ')[-1]
     except:
-        comment_tab = 'N/A'
+        new_status = "Not-Set"
+
+    print("Status:",new_status)
+
+    # comment_tab = ''
 
 
-    open_date = pre_process_date(comment_tab.text.strip().split('\n')[-2])
+    # comment_tab = soup.find('div',"TableObject-item TableObject-item--primary")
+    # comment_tab = soup.find('relative-time')
+    # print("re",comment_tab)
     
+    # comment_tab = comment_tab['datetime']
+    # print("ri",comment_tab)
+
+    # try:
+    #     open_date = pre_process_date(comment_tab)
+    # except:
+    #     open_date = 'N/A'
+    
+    open_date = pre_process_date(close_date)
+    
+    print("Range:",open_date, pre_process_date(close_date))
+
     file_changed = ''
     lines_added = ''
     lines_removed = ''
 
     try:
-        file_changed = soup.find('span', {"id": "files_tab_counter"})
+        file_changed = soup.find(id="files_tab_counter")
     except:
         files_changed = 'N/A'
     
     try:
-        lines_added = soup.find('span', {"class": "text-green"})
+        lines_added = soup.find('span', class_="text-green")
     except:
         lines_added = 'N/A'
     
     try:
-        lines_removed = soup.find('span', {"class": "text-red"})
+        lines_removed = soup.find('span', class_="text-red")
     except:
         lines_removed = 'N/A'
 
     object_tuple = []
 
     if kind == "pulls":
-        file_changed = file_changed.text.strip()
-        lines_added = lines_added.text.strip()
-        lines_removed = lines_removed.text.strip()
-        print
-        # print('date')
+        time.sleep(2)
+        print('In Pulls\n')
+        try:
+            file_changed = file_changed.text.strip()
+            lines_added = lines_added.text.strip()
+            lines_removed = lines_removed.text.strip()
+        except:
+            file_changed = '0'
+            lines_added = '0'
+            lines_removed = '0'
+            # print('date')
     
         object_tuple = [title.text.strip(), labels.text.strip(), \
                         get_num(participants.text),\
@@ -101,7 +143,8 @@ def get_deeper(kind, href, close_date):
     
         object_tuple = [str(i) for i in object_tuple]
 
-        if (open_date <= r1 and pre_process_date(close_date) >= r1) or (open_date <= r2 and pre_process_date(close_date) >= r2) or (open_date >= r1 and pre_process_date(close_date) <= r2):
+        print(r1, r2, r3, open_date, r4)
+        if (open_date >= r1 and open_date <= r2) or (open_date >= r3 and open_date <= r4):
             print('Range: 1 \n -----------')
             objects1.append(object_tuple)
             print(len(objects1))
@@ -115,22 +158,11 @@ def get_deeper(kind, href, close_date):
             print(str(status['title']).strip().split(' ')[-1])
             print('\n')
 
-        elif (open_date <= r4 and pre_process_date(close_date) >= r4) or (open_date <= r3 and pre_process_date(close_date) >= r3) or (open_date >= r3 and pre_process_date(close_date) <= r4):
-            print('Range: 2 \n -----------')
-            objects2.append(object_tuple)
-            print(len(objects2))
-            print('Title:',title.text.strip())
-            print('Labels:',labels.text.strip())
-            print('Participants:',get_num(participants.text))
-            print("Closed:",pre_process_date(close_date).strftime('%d-%b-%Y'))
-            print('Files Changed:',file_changed)
-            print('lines_added:',lines_added)
-            print('lines_deleted:',lines_removed)
-            print(str(status['title']).strip().split(' ')[-1])
-            print('\n')
+
 
     if kind == "issues":
-        
+        print('In Issues\n=============')
+        time.sleep(2)
         object_tuple = [title.text.strip(), labels.text.strip(), \
                         get_num(participants.text), open_date.strftime('%d-%b-%Y'),\
                         pre_process_date(close_date).strftime('%d-%b-%Y'), \
@@ -164,10 +196,11 @@ def get_deeper(kind, href, close_date):
             print('Comments:',comment_tab.text.strip().split('\n')[-1].split(' ')[1].strip())
             print(str(status['title']).strip().split(' ')[-1])
             print('\n')
+    
+    print("       End \n+++++++++++++++++++++++++")
 
-    print(open_date, pre_process_date(close_date))
-    if pre_process_date(close_date) < r1:
-        flag = 0
+    
+    
 
 def pre_process_date(date):
         return parse(date, fuzzy=True)
@@ -213,6 +246,7 @@ def driver(type_of):
             if flag == 1:
                 print("page_changed_to",page)
                 get_pull_requests(type_of,repo,str(page),"closed")
+                time.sleep(2)
             else:
                 break
         
@@ -234,7 +268,7 @@ r1 = datetime(2019,11,1)
 r2 = datetime(2020,1,31)
 
 r3 = datetime(2020,2,1)
-r4 = datetime(2020,4,30)
+r4 = datetime(2020,5,18)
 
 driver("pulls")
 # driver("issues")
