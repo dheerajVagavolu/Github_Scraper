@@ -1,0 +1,26 @@
+Title,Labels,Participants,Open_date,Close_date,Comments,Status
+Bug: parent will mount earlier than its suspending child,Status: Unconfirmed,2,18-May-2020,18-May-2020,1,Closed
+Error: Uncaught Invariant Violation: Minified React error #200 occurring intermittently,Status: Unconfirmed,2,18-May-2020,18-May-2020,4,Closed
+Bug: useState's setState may change your state to 'undefined',Status: Unconfirmed,2,18-May-2020,18-May-2020,1,Closed
+Feature proposal: let class component setState second param callback always give the latest state,Status: Unconfirmed,2,16-May-2020,17-May-2020,1,Closed
+"Error: ""Commit tree does not contain fiber 3661. This is a bug in React DevTools.""",None yet,2,14-May-2020,18-May-2020,2,Closed
+Bug: using useCallback and useEffect at the same time messed my ref,Status: Unconfirmed,3,14-May-2020,14-May-2020,2,Closed
+React Dev tools Not Working For My project,None yet,2,13-May-2020,18-May-2020,0,Closed
+React developer tool doesn't show in Chromium based Edge in Windows,None yet,3,13-May-2020,18-May-2020,2,Closed
+"Error: ""Commit tree does not contain fiber 97. This is a bug in React DevTools.""",Component: Developer Tools Resolution: Duplicate Type: Bug,3,13-May-2020,18-May-2020,3,Closed
+[eslint-plugin-react-hooks] Bug: warning on `useWithoutEffectSuffix`,Component: ESLint Rules Type: Bug,2,13-May-2020,13-May-2020,2,Closed
+The DOM element that ref refers to is missing,Status: Unconfirmed,3,12-May-2020,12-May-2020,4,Closed
+i lost my account,None yet,2,12-May-2020,12-May-2020,0,Closed
+react dev tools,None yet,2,12-May-2020,12-May-2020,0,Closed
+I lost my account,None yet,1,12-May-2020,12-May-2020,0,Closed
+[eslint-plugin-react-hooks] false positive with useFocusEffect,Status: Unconfirmed,4,11-May-2020,12-May-2020,8,Closed
+Bug: unexpected warning on custom hook call-site,Status: Unconfirmed,2,11-May-2020,12-May-2020,2,Closed
+Bug: useMutableSource inside a suspending component doesn't install the subscription,Status: Unconfirmed,2,11-May-2020,12-May-2020,4,Closed
+Bug: react-hooks/exhaustive-deps lint rule not working as expected,Status: Unconfirmed,2,10-May-2020,11-May-2020,12,Closed
+"Error: ""Commit tree already contains fiber 10819. This is a bug in React DevTools.""",Component: Developer Tools Resolution: Duplicate Type: Bug,3,09-May-2020,11-May-2020,2,Closed
+eslint-plugin-react-hooks peerDependency warning with eslint@7.0.0,Status: Unconfirmed,1,09-May-2020,12-May-2020,1,Closed
+There is no issue. Found a solution,Status: Unconfirmed,1,09-May-2020,09-May-2020,0,Closed
+Bug: function component is unmount and mount with old state when hmr,Status: Unconfirmed,3,09-May-2020,09-May-2020,2,Closed
+The pacote dependency should be re-evaluated,Status: Unconfirmed,3,09-May-2020,09-May-2020,3,Closed
+"Bug (MS Edge):  Expected identifier, string or number (White screen)",Resolution: Needs More Information Status: Unconfirmed,3,08-May-2020,09-May-2020,6,Closed
+Bug: Typeerror: ReactDOM.createRoot(container) is not a function,Status: Unconfirmed,3,08-May-2020,08-May-2020,2,Closed

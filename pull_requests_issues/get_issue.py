@@ -64,7 +64,7 @@ def get_deeper(kind, href, close_date):
     soup = BeautifulSoup(page, 'html.parser')
     participants = soup.find('div', class_="participation")
     title = soup.find('span', class_="js-issue-title")
-    labels = soup.find('div', class_="labels css-truncate js-issue-labels")
+    labels = soup.find('div', class_="labels")
     status = soup.find('span', class_="State")
 
     if status == None:
@@ -83,19 +83,15 @@ def get_deeper(kind, href, close_date):
     # comment_tab = ''
 
 
-    # comment_tab = soup.find('div',"TableObject-item TableObject-item--primary")
-    # comment_tab = soup.find('relative-time')
-    # print("re",comment_tab)
-    
-    # comment_tab = comment_tab['datetime']
-    # print("ri",comment_tab)
+    comment_tab = soup.find('div',"TableObject-item TableObject-item--primary")
+    comment_tab = soup.find('relative-time')
+    comment_tab = comment_tab['datetime']
+    print("ri: ----> ",comment_tab)
 
-    # try:
-    #     open_date = pre_process_date(comment_tab)
-    # except:
-    #     open_date = 'N/A'
+    open_date = pre_process_date(comment_tab)
+
     
-    open_date = pre_process_date(close_date)
+    
     
     print("Range:",open_date, pre_process_date(close_date))
 
@@ -121,6 +117,7 @@ def get_deeper(kind, href, close_date):
     object_tuple = []
 
     if kind == "pulls":
+        open_date = pre_process_date(close_date)
         time.sleep(2)
         print('In Pulls\n')
         try:
@@ -143,7 +140,11 @@ def get_deeper(kind, href, close_date):
     
         object_tuple = [str(i) for i in object_tuple]
 
-        print(r1, r2, r3, open_date, r4)
+        try:
+            print(open_date >= r4)
+        except:
+            print("Cant Compare Dates")
+
         if (open_date >= r1 and open_date <= r2) or (open_date >= r3 and open_date <= r4):
             print('Range: 1 \n -----------')
             objects1.append(object_tuple)
@@ -161,22 +162,46 @@ def get_deeper(kind, href, close_date):
 
 
     if kind == "issues":
-        print('In Issues\n=============')
+        
         time.sleep(2)
-        object_tuple = [title.text.strip(), labels.text.strip(), \
+        comment_tab = soup.find('div',"TableObject-item TableObject-item--primary")
+        print('In Issues\n=============')
+        print(title.text.strip())
+        
+        labels = soup.find('div', class_="labels css-truncate js-issue-labels")
+        labels = labels.text.strip().replace('\n', ' ')
+        print("labels:", labels)
+        print(get_num(participants.text))
+        print(open_date.strftime('%d-%b-%Y'))
+        print(pre_process_date(close_date).strftime('%d-%b-%Y'))
+        print(comment_tab.text.strip().split('\n')[-1].split(' ')[1].strip())
+        print(new_status)
+
+        object_tuple = [title.text.strip(), labels, \
                         get_num(participants.text), open_date.strftime('%d-%b-%Y'),\
                         pre_process_date(close_date).strftime('%d-%b-%Y'), \
                         comment_tab.text.strip().split('\n')[-1].split(' ')[1].strip(),\
                         new_status]
+        
     
         object_tuple = [str(i) for i in object_tuple]
 
-        if (open_date <= r1 and pre_process_date(close_date) >= r1) or (open_date <= r2 and pre_process_date(close_date) >= r2) or (open_date >= r1 and pre_process_date(close_date) <= r2):
+        open_date = pre_process_date(open_date.strftime('%d-%b-%Y'))
+        # print("here --> ")
+        # print(open_date, r4)
+        # print(type(open_date), type(r4))
+        
+        try:
+            print(open_date >= r4)
+        except:
+            print("Cant Compare Dates")
+
+        if (open_date >= r1 and open_date <= r2) or (open_date >= r3 and open_date <= r4):
             print('Range: 1 \n -----------')
             objects1.append(object_tuple)
             print(len(objects1))
             print('Title:',title.text.strip())
-            print('Labels:',labels.text.strip())
+            print('Labels:',labels)
             print('Participants:',get_num(participants.text))
             print('Opened:',open_date.strftime('%d-%b-%Y'))
             print("Closed:",pre_process_date(close_date).strftime('%d-%b-%Y'))
@@ -184,20 +209,10 @@ def get_deeper(kind, href, close_date):
             print(str(status['title']).strip().split(' ')[-1])
             print('\n')
 
-        elif (open_date <= r4 and pre_process_date(close_date) >= r4) or (open_date <= r3 and pre_process_date(close_date) >= r3) or (open_date >= r3 and pre_process_date(close_date) <= r4):
-            print('Range: 2 \n -----------')
-            objects2.append(object_tuple)
-            print(len(objects2))
-            print('Title:',title.text.strip())
-            print('Labels:',labels.text.strip())
-            print('Participants:',get_num(participants.text))
-            print('Opened:',open_date.strftime('%d-%b-%Y'))
-            print("Closed:",pre_process_date(close_date).strftime('%d-%b-%Y'))
-            print('Comments:',comment_tab.text.strip().split('\n')[-1].split(' ')[1].strip())
-            print(str(status['title']).strip().split(' ')[-1])
-            print('\n')
     
-    print("       End \n+++++++++++++++++++++++++")
+        print("End")
+
+    print("End of one request \n+++++++++++++++++++++++++")
 
     
     
@@ -264,11 +279,11 @@ def driver(type_of):
     
     print('Terminating ... ')
 
-r1 = datetime(2019,11,1)
-r2 = datetime(2020,1,31)
+r1 = pre_process_date("2019,Nov,1")
+r2 = pre_process_date("2020,Jan,31")
 
-r3 = datetime(2020,2,1)
-r4 = datetime(2020,5,18)
+r3 = pre_process_date("2020,Feb,1")
+r4 = pre_process_date("2020,May,18")
 
-# driver("pulls")
-driver("issues")
+driver("pulls")
+# driver("issues")
