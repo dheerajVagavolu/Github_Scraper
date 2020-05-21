@@ -7,24 +7,24 @@ import csv
 
 global flag
 
-def get_pull_requests(kind ,url, page, _type):
+def get_pull_requests(kind ,url, page):
     global flag
-    rest = "/"+kind+"?page="+ page +"&q=is%3Aissue+is%3A"+_type
+    rest = "/"+kind+"?page="+ page +"&q=is%3Aissue+is%3Aclosed+closed%3A2019-10-30..2020-04-30"
     URL = url + rest
-    
+
     print(URL)
 
     page = requests.get(URL.strip())
     page = page.content
     soup = BeautifulSoup(page, 'html.parser')
     issues = soup.find_all('div', class_="flex-auto min-width-0 lh-condensed p-2 pr-3 pr-md-2")
-    
+
     print(len(issues))
 
     if len(issues) < 25:
         flag = 0
     for issue in issues:
-        
+
         meta_data = issue.find('relative-time')
         issue_link = issue.find_all('a', class_='link-gray-dark v-align-middle no-underline h4 js-navigation-open')
 
@@ -36,13 +36,13 @@ def get_pull_requests(kind ,url, page, _type):
                     href = link['href']
                     href = 'https://github.com'+href
                     print(href)
-                    get_deeper(kind, href, meta_data['datetime'][:10]); 
+                    get_deeper(kind, href, meta_data['datetime'][:10]);
             except:
                 pass
-        
+
 def get_deeper(kind, href, close_date):
 
-    
+
 
     global flag
     global f1w
@@ -54,7 +54,7 @@ def get_deeper(kind, href, close_date):
     if pre_process_date(close_date) < r1:
         print("Out of range")
         flag = 0
-    
+
     if pre_process_date(close_date) > r4:
         print("Out of range")
 
@@ -69,10 +69,10 @@ def get_deeper(kind, href, close_date):
 
     if status == None:
         status = "Status: Not-Set"
-    
+
     # print(status)
-    
-    
+
+
     try:
         new_status = str(status['title']).strip().split(' ')[-1]
     except:
@@ -86,14 +86,15 @@ def get_deeper(kind, href, close_date):
     comment_tab = soup.find('div',"TableObject-item TableObject-item--primary")
     comment_tab = soup.find('relative-time')
     comment_tab = comment_tab['datetime']
-    
+        
+        
     print("ri: ----> ",comment_tab)
 
     open_date = pre_process_date(comment_tab)
 
-    
-    
-    
+
+
+
     print("Range:",open_date, pre_process_date(close_date))
 
     file_changed = ''
@@ -104,12 +105,12 @@ def get_deeper(kind, href, close_date):
         file_changed = soup.find(id="files_tab_counter")
     except:
         files_changed = 'N/A'
-    
+
     try:
         lines_added = soup.find('span', class_="text-green")
     except:
         lines_added = 'N/A'
-    
+
     try:
         lines_removed = soup.find('span', class_="text-red")
     except:
@@ -130,15 +131,15 @@ def get_deeper(kind, href, close_date):
             lines_added = '0'
             lines_removed = '0'
             # print('date')
-    
+
         object_tuple = [title.text.strip(), labels.text.strip(), \
                         get_num(participants.text),\
                         pre_process_date(close_date).strftime('%d-%b-%Y'), \
                         file_changed, lines_added, lines_removed,\
                         new_status]
-        
-        
-    
+
+
+
         object_tuple = [str(i) for i in object_tuple]
 
         try:
@@ -146,7 +147,7 @@ def get_deeper(kind, href, close_date):
         except:
             print("Cant Compare Dates")
 
-        if (open_date >= r1 and open_date <= r2) or (open_date >= r3 and open_date <= r4):
+        if (open_date <= r4):
             print('Range: 1 \n -----------')
             objects1.append(object_tuple)
             print(len(objects1))
@@ -163,12 +164,12 @@ def get_deeper(kind, href, close_date):
 
 
     if kind == "issues":
-        
+
         time.sleep(2)
         comment_tab = soup.find('div',"TableObject-item TableObject-item--primary")
         print('In Issues\n=============')
         print(title.text.strip())
-        
+
         labels = soup.find('div', class_="labels css-truncate js-issue-labels")
         labels = labels.text.strip().replace('\n', ' ')
         print("labels:", labels)
@@ -183,15 +184,15 @@ def get_deeper(kind, href, close_date):
                         pre_process_date(close_date).strftime('%d-%b-%Y'), \
                         comment_tab.text.strip().split('\n')[-1].split(' ')[1].strip(),\
                         new_status]
-        
-    
+
+
         object_tuple = [str(i) for i in object_tuple]
 
         open_date = pre_process_date(open_date.strftime('%d-%b-%Y'))
         # print("here --> ")
         # print(open_date, r4)
         # print(type(open_date), type(r4))
-        
+
         try:
             print(open_date >= r4)
         except:
@@ -210,13 +211,13 @@ def get_deeper(kind, href, close_date):
             print(str(status['title']).strip().split(' ')[-1])
             print('\n')
 
-    
+
         print("End")
 
     print("End of one request \n+++++++++++++++++++++++++")
 
-    
-    
+
+
 
 def pre_process_date(date):
         return parse(date, fuzzy=True)
@@ -234,9 +235,9 @@ def driver(type_of):
 
     repos = open('list').readlines()
     for repo in repos:
-        
+
         print("Starting for Repo "+repo+"\n=====================")
-        
+
         name = get_name(repo)
 
         global f1
@@ -255,17 +256,17 @@ def driver(type_of):
             dat = ['Title', 'Labels', 'Participants', 'Close_date', 'files_changed', 'lines_added','lines_deleted','Status']
         elif type_of == 'issues':
             dat = ['Title', 'Labels', 'Participants', 'Open_date', 'Close_date', 'Comments', 'Status']
-        
+
         flag = 1
         print(flag)
         for page in range(1,100):
             if flag == 1:
                 print("page_changed_to",page)
-                get_pull_requests(type_of,repo,str(page),"closed")
+                get_pull_requests(type_of,repo,str(page))
                 time.sleep(2)
             else:
                 break
-        
+
         with open('data/'+name+'_'+type_of+'_'+str(r1.strftime('%b-%d-%Y')) + '_' + str(r2.strftime('%b-%d-%Y')) + '.csv', 'w', newline='') as csvfile:
             f1w = csv.writer(csvfile)
             f1w.writerow(dat)
@@ -277,14 +278,14 @@ def driver(type_of):
             f2w.writerow(dat)
             for k in objects2:
                 f2w.writerow(k)
-    
+
     print('Terminating ... ')
 
 r1 = pre_process_date("2019,Nov,1")
 r2 = pre_process_date("2020,Jan,31")
 
 r3 = pre_process_date("2020,Feb,1")
-r4 = pre_process_date("2020,May,1")
+r4 = pre_process_date("2020,May,18")
 
-# driver("pulls")
-driver("issues")
+driver("pulls")
+# driver("issues")
